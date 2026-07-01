@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventPro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-inner">
+            <h1>Event<span>Pro</span></h1>
+            <nav>
+                <a class="active" data-page="dashboard">Панель управления</a>
+                <a data-page="venues">Площадки</a>
+                <a data-page="contractors">Подрядчики</a>
+                <a data-page="checklists">Чек-листы</a>
+            </nav>
+            <div class="sidebar-tip">
+                Данные хранятся в браузере
+            </div>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        <div class="main-content">
+
+            <div id="page-dashboard" class="page active">
+                <div class="page-header-block">
+                    <div>
+                        <h1 class="page-title">Панель управления</h1>
+                        <p class="page-subtitle">Общая статистика и последние события</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" onclick="navigateTo('venues')">Просмотр площадок</button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card venues" onclick="navigateTo('venues')">
+                        <div class="stat-number" id="stat-venues">0</div>
+                        <div class="stat-label">Площадок</div>
+                        <div class="stat-change">всего в каталоге</div>
+                    </div>
+                    <div class="stat-card contractors" onclick="navigateTo('contractors')">
+                        <div class="stat-number" id="stat-contractors">0</div>
+                        <div class="stat-label">Подрядчиков</div>
+                        <div class="stat-change">доступно для заказа</div>
+                    </div>
+                    <div class="stat-card checklists" onclick="navigateTo('checklists')">
+                        <div class="stat-number" id="stat-checklists">0</div>
+                        <div class="stat-label">Чек-листов</div>
+                        <div class="stat-change">в работе</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-col">
+                        <div class="quick-actions">
+                            <h3>Быстрые действия</h3>
+                            <div class="actions-group">
+                                <button class="btn" onclick="openModal('venue')">Добавить площадку</button>
+                                <button class="btn btn-secondary" onclick="openModal('contractor')">Добавить подрядчика</button>
+                                <button class="btn btn-secondary" onclick="openModal('checklist')">Создать чек-лист</button>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <h3>Популярные площадки</h3>
+                            <div id="top-venues-list" class="mini-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-col">
+                        <div class="dashboard-card">
+                            <h3>Последние чек-листы</h3>
+                            <div id="recent-checklists" class="mini-list"></div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <h3>Топ подрядчиков</h3>
+                            <div id="top-contractors" class="mini-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-venues" class="page">
+                <div class="page-header-block">
+                    <div class="page-header-left">
+                        <h1 class="page-title">Каталог площадок</h1>
+                        <p class="page-subtitle">Выберите место для мероприятия</p>
+                    </div>
+                    <button class="btn" onclick="openModal('venue')">Добавить</button>
+                </div>
+
+                <div class="filters">
+                    <input type="text" id="venue-search" placeholder="Поиск по названию..." oninput="renderVenues()">
+                    <select id="venue-feature-filter" onchange="renderVenues()">
+                        <option value="">Все возможности</option>
+                        <option value="wifi">Wi-Fi</option>
+                        <option value="projector">Проектор</option>
+                        <option value="sound">Звук</option>
+                        <option value="kitchen">Кухня</option>
+                        <option value="parking">Парковка</option>
+                        <option value="stage">Сцена</option>
+                        <option value="accommodation">Размещение</option>
+                    </select>
+                </div>
+
+                <div class="cards-grid" id="venues-list"></div>
+            </div>
+
+            <div id="page-contractors" class="page">
+                <div class="page-header-block">
+                    <div class="page-header-left">
+                        <h1 class="page-title">Подрядчики</h1>
+                        <p class="page-subtitle">Найдите профессионалов</p>
+                    </div>
+                    <button class="btn" onclick="openModal('contractor')">Добавить</button>
+                </div>
+
+                <div class="filters">
+                    <select id="contractor-category-filter" onchange="renderContractors()">
+                        <option value="">Все категории</option>
+                        <option value="catering">Кейтеринг</option>
+                        <option value="photographer">Фотограф</option>
+                        <option value="decor">Декор</option>
+                        <option value="dj">DJ</option>
+                        <option value="entertainer">Ведущий</option>
+                        <option value="florist">Флорист</option>
+                        <option value="videographer">Видеограф</option>
+                        <option value="transport">Транспорт</option>
+                    </select>
+                    <input type="text" id="contractor-search" placeholder="Поиск по имени..." oninput="renderContractors()">
+                </div>
+
+                <div class="cards-grid" id="contractors-list"></div>
+            </div>
+
+            <div id="page-checklists" class="page">
+                <div class="page-header-block">
+                    <div class="page-header-left">
+                        <h1 class="page-title">Чек-листы</h1>
+                        <p class="page-subtitle">Отслеживайте подготовку</p>
+                    </div>
+                    <button class="btn" onclick="openModal('checklist')">Создать</button>
+                </div>
+
+                <div class="checklist-container" id="checklists-list"></div>
+            </div>
+
+        </div>
+
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <div class="footer-left">
+                    <p class="footer-brand">Event<span>Pro</span></p>
+                    <p class="footer-copy">2026 EventPro. Все права защищены.</p>
+                </div>
+                <div class="footer-center">
+                    <p class="footer-phone">+7 (999) 123-45-67</p>
+                    <p class="footer-email">info@eventpro.ru</p>
+                </div>
+                <div class="footer-right">
+                    <a href="#" onclick="openPolicy(); return false;" class="footer-link">Политика конфиденциальности</a>
+                    <a href="#" onclick="openTerms(); return false;" class="footer-link">Пользовательское соглашение</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div class="modal-overlay" id="policy-modal" onclick="closePolicy(event)">
+        <div class="modal modal-wide" onclick="event.stopPropagation()">
+            <h2>Политика конфиденциальности</h2>
+            <div class="modal-text">
+                <p><strong>1. Общие положения</strong></p>
+                <p>Настоящая Политика конфиденциальности определяет порядок сбора, хранения и использования персональных данных пользователей сервиса EventPro.</p>
+                <br>
+                <p><strong>2. Какие данные мы собираем</strong></p>
+                <p>Имя и контактные данные (телефон, email)<br>
+                Данные о мероприятиях, площадках и подрядчиках<br>
+                Информация о действиях в системе</p>
+                <br>
+                <p><strong>3. Как мы используем данные</strong></p>
+                <p>Для предоставления доступа к функционалу платформы<br>
+                Для связи с вами по вопросам организации мероприятий<br>
+                Для улучшения качества сервиса</p>
+                <br>
+                <p><strong>4. Хранение данных</strong></p>
+                <p>Все данные хранятся в вашем браузере (localStorage) и не передаются третьим лицам. Мы не используем файлы cookie для отслеживания.</p>
+                <br>
+                <p><strong>5. Права пользователя</strong></p>
+                <p>Вы можете в любой момент удалить все свои данные через интерфейс платформы или очистив localStorage браузера.</p>
+                <br>
+                <p><strong>6. Контакты</strong></p>
+                <p>По вопросам конфиденциальности: privacy@eventpro.ru</p>
+                <br>
+                <p class="modal-date">Последнее обновление: 28 июня 2026 г.</p>
+            </div>
+            <div class="form-actions">
+                <button class="btn" onclick="closePolicy()">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="terms-modal" onclick="closeTerms(event)">
+        <div class="modal modal-wide" onclick="event.stopPropagation()">
+            <h2>Пользовательское соглашение</h2>
+            <div class="modal-text">
+                <p><strong>1. Предмет соглашения</strong></p>
+                <p>Настоящее соглашение регулирует отношения между EventPro и пользователями платформы по организации мероприятий.</p>
+                <br>
+                <p><strong>2. Права и обязанности пользователя</strong></p>
+                <p>Использовать платформу только в законных целях<br>
+                Не нарушать работу сервиса<br>
+                Нести ответственность за достоверность введенных данных</p>
+                <br>
+                <p><strong>3. Права и обязанности администрации</strong></p>
+                <p>Предоставлять доступ к функционалу платформы<br>
+                Обеспечивать сохранность данных в рамках localStorage<br>
+                Улучшать сервис и исправлять ошибки</p>
+                <br>
+                <p><strong>4. Ответственность</strong></p>
+                <p>EventPro не несет ответственности за:<br>
+                Действия подрядчиков и площадок<br>
+                Результаты организации мероприятий<br>
+                Потерю данных в случае очистки браузера пользователем</p>
+                <br>
+                <p><strong>5. Изменение соглашения</strong></p>
+                <p>Администрация оставляет за собой право изменять условия соглашения с уведомлением пользователей через платформу.</p>
+                <br>
+                <p class="modal-date">Последнее обновление: 28 июня 2026 г.</p>
+            </div>
+            <div class="form-actions">
+                <button class="btn" onclick="closeTerms()">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <h2 id="modal-title">Добавить</h2>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
